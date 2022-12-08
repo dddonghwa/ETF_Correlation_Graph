@@ -395,3 +395,22 @@ if option == 'nx1':
     source_code = HtmlFile.read() 
     st.markdown('## Pyvis chart of nx1')
     components.html(source_code, height = 1200,width=1000)
+
+
+st.markdown("## Market(S&P) Line Chart")
+st.line_chart(bm_returns)
+
+st.markdown('## Sector Line Chart')
+st_etfs = st.multiselect("Select ETFs you want to display", etfs, ['XLE US Equity']) 
+dfs = {st_etf : sector_returns[st_etf] for st_etf in st_etfs}
+
+fig = go.Figure(layout=go.Layout(width=800))
+fig = fig.add_trace(go.Scatter(x=sector_returns.index, y=sector_returns['XLE US Equity']))
+
+fig = go.Figure(layout=go.Layout(width=800))
+for st_etf, df in dfs.items():
+    fig = fig.add_trace(go.Scatter(x=sector_returns.index, y=sector_returns[st_etf], name=st_etf))
+
+fig.update_xaxes(title_text = "Year")
+st.plotly_chart(fig)
+
