@@ -45,7 +45,7 @@ with st.expander(label="Project Descriptions", expanded=False):
 sector_etfs = {
     'XLE US Equity': 'Energy',
     'XLU US Equity': 'Utilities', 
-    'XLK US Equity': 'Information Technology',
+    'XLK US Equity': 'Information Technology', 
     'XLB US Equity': 'Materials',
     'XLP US Equity': 'Consumer Staples', 
     'XLY US Equity': 'Consumer Discretionary',
@@ -395,3 +395,40 @@ if option == 'nx1':
     source_code = HtmlFile.read() 
     st.markdown('## Pyvis chart of nx1')
     components.html(source_code, height = 1200,width=1000)
+
+# Line Chart
+avg_sector_returns = pd.DataFrame(columns = sector_returns.columns)
+for sector in sector_mw :
+    avg_sector_returns.loc[sector.index[0]] = sector.sum()
+
+bm_mw = moving_window(bm_returns, 21)
+avg_bm = pd.DataFrame(columns=[benchmark])
+for bm in bm_mw :
+    avg_bm.loc[bm.index[0]] = bm.sum()
+
+avg_bm = avg_bm.reset_index()
+avg_bm.columns = ['Dates', benchmark]
+
+st.markdown("## Market(S&P) Line Chart")
+st.line_chart(data=avg_bm, x='Dates', y=benchmark)
+
+st.markdown('## Sector Line Chart')
+default_etfs = ['XLE US Equity', 'XLF US Equity']
+select_etfs = st.multiselect("Select ETF sectors you want to display", etfs, default_etfs) 
+dfs = {select_etf : avg_sector_returns[select_etf] for select_etf in select_etfs}
+
+fig = go.Figure(layout=go.Layout(width=900))
+for default_etf in default_etfs:
+    fig = fig.add_trace(go.Scatter(x=avg_sector_returns.index, y=avg_sector_returns[default_etf], name=default_etf))
+
+
+fig = go.Figure(layout=go.Layout(width=900))
+for select_etf, df in dfs.items():
+    fig = fig.add_trace(go.Scatter(x=avg_sector_returns.index, y=avg_sector_returns[select_etf], name=select_etf))
+
+fig.update_xaxes(title_text = "Dates")
+fig.update_yaxes(title_text= "Rate of Return")
+st.plotly_chart(fig)
+
+
+
