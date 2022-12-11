@@ -62,8 +62,11 @@ etfs = sector_returns.columns.tolist()
 
 #-----------------------------------------------------
 # Moving Window
-def moving_window(df, length, overlaps=10):
+def moving_window_overlaps(df, length, overlaps=10):
     return [df[i:i+length] for i in range(0, (len(df)+1)-length, length//overlaps)]
+
+def moving_window(df, length):
+    return [df[i:i+length] for i in range(0, (len(df)+1)-length, length)]
 
 sector_mw = moving_window(sector_returns, 21)
 
@@ -274,7 +277,7 @@ with chart2:
 st.markdown('## Correlation Chart Analysis')
 ## 재훈님 이 부분 채워주세요!
 
-sector_mw1 = moving_window(sector_returns, 60, overlaps = 30)
+sector_mw1 = moving_window_overlaps(sector_returns, 60, overlaps = 30)
 
 mw_corr1 = df_distance_correlation(sector_mw1)
 mw_net1 = build_corr_nx(mw_corr1)
@@ -292,10 +295,11 @@ max_ind = np.argmax(metric['max-min'])
 
 fig = go.Figure(layout=go.Layout(width=1500))
 
-fig.add_trace(go.Scatter(x=avg_sector_returns.index, y= metric['sum']/np.max(metric['sum']), name='sum'))
-# fig.add_trace(go.Scatter(x=avg_sector_returns.index, y= (metric['entropy'] - np.average(metric['entropy'])) * 5, name='entropy'))
-fig.add_trace(go.Scatter(x=avg_sector_returns.index, y= metric['max-min']/np.max(metric['max-min']), name='max-min'))
-fig.add_trace(go.Scatter(x=avg_sector_returns.index[:-12:2], y= metric['diff']/np.max(metric['diff'])/3, name='diff'))
+sector_mw1_x = [mw.index[0] for mw in sector_mw1]
+fig.add_trace(go.Scatter(x=sector_mw1_x, y= metric['sum']/np.max(metric['sum']), name='sum'))
+# fig.add_trace(go.Scatter(x=sector_mw1_x, y= (metric['entropy'] - np.average(metric['entropy'])) * 5, name='entropy'))
+fig.add_trace(go.Scatter(x=sector_mw1_x, y= metric['max-min']/np.max(metric['max-min']), name='max-min'))
+fig.add_trace(go.Scatter(x=sector_mw1_x[:-12:2], y= metric['diff']/np.max(metric['diff'])/3, name='diff'))
 
 fig.update_xaxes(title_text = "Dates")
 fig.update_yaxes(title_text= "Metrics")
