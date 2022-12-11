@@ -7,3 +7,4 @@ seaborn
 networkx==2.6.3
 pyvis==0.3.1
 dcor
+openpyxl
