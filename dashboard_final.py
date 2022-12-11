@@ -345,23 +345,24 @@ for single_graph in mw_net:
 top3_dates = {key_date : list(np.array(dates)[single_top3_sim]) for (key_date, single_top3_sim) in zip(dates, top3_sim)}
 
 
-tab1, tab2 = st.columns(2)
+tab1, tab2, tab3 = st.columns([3,1,1])
 with tab1:
     st.markdown(f'### Pyvis Graph of {selected_date}') 
     HtmlFile = open(f"./html/{selected_date}.html", 'r', encoding='utf-8')
     source_code = HtmlFile.read()
-    components.html(source_code, height = 600,width=600)
+    components.html(source_code, height = 900,width=900)
 with tab2:
     st.markdown(f'### Similar markets with {selected_date}')
-    st.markdown(f'#### 1st candidate : {top3_dates[str(selected_date)][0]}')
+    st.markdown(f'`1st candidate` : `{top3_dates[str(selected_date)][0]}`')
     HtmlFile = open(f"./html/{top3_dates[str(selected_date)][0]}.html", 'r', encoding='utf-8')
     source_code = HtmlFile.read()
-    components.html(source_code, height = 360,width=360)
-    st.markdown(f'#### 2nd candidate : {top3_dates[str(selected_date)][1]}')
+    components.html(source_code, height = 300,width=300)
+    st.markdown(f'`2nd candidate` : `{top3_dates[str(selected_date)][1]}`')
     HtmlFile = open(f"./html/{top3_dates[str(selected_date)][1]}.html", 'r', encoding='utf-8')
     source_code = HtmlFile.read()
-    components.html(source_code, height = 360,width=360)
-    st.markdown(f'#### 3rd candidate : {top3_dates[str(selected_date)][2]}')
+    components.html(source_code, height = 300,width=300)
+with tab3:
+    st.markdown(f'`3rd candidate` : `{top3_dates[str(selected_date)][2]}`')
     HtmlFile = open(f"./html/{top3_dates[str(selected_date)][2]}.html", 'r', encoding='utf-8')
     source_code = HtmlFile.read()
-    components.html(source_code, height = 360,width=360)
+    components.html(source_code, height = 300,width=300)
