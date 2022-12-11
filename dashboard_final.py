@@ -274,15 +274,15 @@ with chart2:
 st.markdown('## Correlation Chart Analysis')
 ## 재훈님 이 부분 채워주세요!
 
-sector_mw = moving_window(sector_returns, 60, overlaps = 30)
+sector_mw1 = moving_window(sector_returns, 60, overlaps = 30)
 
-mw_corr = df_distance_correlation(sector_mw)
-mw_net = build_corr_nx(mw_corr)
+mw_corr1 = df_distance_correlation(sector_mw1)
+mw_net1 = build_corr_nx(mw_corr1)
 
 metric = {}
-metric['sum'] = calculate_metric(mw_corr, 'sum')
-metric['entropy'] = calculate_metric(mw_corr, 'entropy')
-metric['max-min'] = calculate_metric(mw_corr, 'max-min')
+metric['sum'] = calculate_metric(mw_corr1, 'sum')
+metric['entropy'] = calculate_metric(mw_corr1, 'entropy')
+metric['max-min'] = calculate_metric(mw_corr1, 'max-min')
 metric['diff'] = calculate_diff(metric['max-min'])
 
 # max-min 이 최대, 최소를 찍는 date 를 저장하고 있는 부분
@@ -304,12 +304,13 @@ st.plotly_chart(fig)
 #-----------------------------------------------------
 from pyvis.network import Network
 
+import os
+if not os.path.exists('./html/2022-04-07.html'):
 
-#for i in range(len(mw_net)):
-#    nt = Network(height="500px", width="100%")
-#    nt.from_nx(mw_net[i])
-#    nt.show(f'./html/{dates_list[i]}.html')
-
+    for i in range(len(mw_net)):
+        nt = Network(height="500px", width="100%")
+        nt.from_nx(mw_net[i])
+        nt.show(f'./html/{dates_list[i]}.html')
 
 import streamlit.components.v1 as components
 st.markdown(f'## Search Similar Market Trend Histories with Graph')
