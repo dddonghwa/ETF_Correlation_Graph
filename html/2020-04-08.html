@@ -1,0 +1,155 @@
+<html>
+    <head>
+        <meta charset="utf-8">
+        
+            <script src="lib/bindings/utils.js"></script>
+            <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/vis-network/9.1.2/dist/dist/vis-network.min.css" integrity="sha512-WgxfT5LWjfszlPHXRmBWHkV2eceiWTOBvrKCNbdgDYTHrT2AeLCGbF4sZlZw3UMN3WtL0tGUoIAKsu8mllg/XA==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+            <script src="https://cdnjs.cloudflare.com/ajax/libs/vis-network/9.1.2/dist/vis-network.min.js" integrity="sha512-LnvoEWDFrqGHlHmDD2101OrLcbsfkrzoSpvtSQtxK3RMnRV0eOkhhBN2dXHKRrUU8p2DGRTk35n4O8nWSVe1mQ==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+            
+        
+<center>
+<h1></h1>
+</center>
+
+<!-- <link rel="stylesheet" href="../node_modules/vis/dist/vis.min.css" type="text/css" />
+<script type="text/javascript" src="../node_modules/vis/dist/vis.js"> </script>-->
+        <link
+          href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0-beta3/dist/css/bootstrap.min.css"
+          rel="stylesheet"
+          integrity="sha384-eOJMYsd53ii+scO/bJGFsiCZc+5NDVN2yr8+0RDqr0Ql0h+rP48ckxlpbzKgwra6"
+          crossorigin="anonymous"
+        />
+        <script
+          src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0-beta3/dist/js/bootstrap.bundle.min.js"
+          integrity="sha384-JEW9xMcG8R+pH31jmWH6WWP0WintQrMb4s7ZOdauHnUtxwoG2vI5DkLtS3qm9Ekf"
+          crossorigin="anonymous"
+        ></script>
+
+
+        <center>
+          <h1></h1>
+        </center>
+        <style type="text/css">
+
+             #mynetwork {
+                 width: 100%;
+                 height: 500px;
+                 background-color: #ffffff;
+                 border: 1px solid lightgray;
+                 position: relative;
+                 float: left;
+             }
+
+             
+
+             
+
+             
+        </style>
+    </head>
+
+
+    <body>
+        <div class="card" style="width: 100%">
+            
+            
+            <div id="mynetwork" class="card-body"></div>
+        </div>
+
+        
+        
+
+        <script type="text/javascript">
+
+              // initialize global variables.
+              var edges;
+              var nodes;
+              var allNodes;
+              var allEdges;
+              var nodeColors;
+              var originalNodes;
+              var network;
+              var container;
+              var options, data;
+              var filter = {
+                  item : '',
+                  property : '',
+                  value : []
+              };
+
+              
+
+              
+
+              // This method is responsible for drawing the graph, returns the drawn network
+              function drawGraph() {
+                  var container = document.getElementById('mynetwork');
+
+                  
+
+                  // parsing and collecting nodes and edges from the python
+                  nodes = new vis.DataSet([{"color": "#97c2fc", "id": "XLE US Equity", "label": "XLE US Equity", "shape": "dot", "size": 10}, {"color": "#97c2fc", "id": "XLU US Equity", "label": "XLU US Equity", "shape": "dot", "size": 10}, {"color": "#97c2fc", "id": "XLK US Equity", "label": "XLK US Equity", "shape": "dot", "size": 10}, {"color": "#97c2fc", "id": "XLB US Equity", "label": "XLB US Equity", "shape": "dot", "size": 10}, {"color": "#97c2fc", "id": "XLP US Equity", "label": "XLP US Equity", "shape": "dot", "size": 10}, {"color": "#97c2fc", "id": "XLY US Equity", "label": "XLY US Equity", "shape": "dot", "size": 10}, {"color": "#97c2fc", "id": "XLI US Equity", "label": "XLI US Equity", "shape": "dot", "size": 10}, {"color": "#97c2fc", "id": "XLV US Equity", "label": "XLV US Equity", "shape": "dot", "size": 10}, {"color": "#97c2fc", "id": "XLF US Equity", "label": "XLF US Equity", "shape": "dot", "size": 10}, {"color": "#97c2fc", "id": "VOX US Equity", "label": "VOX US Equity", "shape": "dot", "size": 10}]);
+                  edges = new vis.DataSet([{"from": "XLE US Equity", "to": "XLU US Equity", "width": 0.4067835105640263}, {"from": "XLE US Equity", "to": "XLK US Equity", "width": 0.4296935713290687}, {"from": "XLE US Equity", "to": "XLB US Equity", "width": 0.22025745335618996}, {"from": "XLE US Equity", "to": "XLP US Equity", "width": 0.4569473121792935}, {"from": "XLE US Equity", "to": "XLY US Equity", "width": 0.31854786087084375}, {"from": "XLE US Equity", "to": "XLI US Equity", "width": 0.23730700214634015}, {"from": "XLE US Equity", "to": "XLV US Equity", "width": 0.5157903398896323}, {"from": "XLE US Equity", "to": "XLF US Equity", "width": 0.25542158782374047}, {"from": "XLE US Equity", "to": "VOX US Equity", "width": 0.3149677376600044}, {"from": "XLU US Equity", "to": "XLK US Equity", "width": 0.36503957238728546}, {"from": "XLU US Equity", "to": "XLB US Equity", "width": 0.1403107298307592}, {"from": "XLU US Equity", "to": "XLP US Equity", "width": 0.10885865469417466}, {"from": "XLU US Equity", "to": "XLY US Equity", "width": 0.183432877732552}, {"from": "XLU US Equity", "to": "XLI US Equity", "width": 0.2015216232604914}, {"from": "XLU US Equity", "to": "XLV US Equity", "width": 0.26142913612828667}, {"from": "XLU US Equity", "to": "XLF US Equity", "width": 0.19554168541795236}, {"from": "XLU US Equity", "to": "VOX US Equity", "width": 0.29881244627784564}, {"from": "XLK US Equity", "to": "XLB US Equity", "width": 0.35420806034378416}, {"from": "XLK US Equity", "to": "XLP US Equity", "width": 0.29751002593677656}, {"from": "XLK US Equity", "to": "XLY US Equity", "width": 0.14032818211038722}, {"from": "XLK US Equity", "to": "XLI US Equity", "width": 0.36245583736410103}, {"from": "XLK US Equity", "to": "XLV US Equity", "width": 0.23593239212513584}, {"from": "XLK US Equity", "to": "XLF US Equity", "width": 0.4014847414669276}, {"from": "XLK US Equity", "to": "VOX US Equity", "width": 0.09250264213137649}, {"from": "XLB US Equity", "to": "XLP US Equity", "width": 0.20592197023027525}, {"from": "XLB US Equity", "to": "XLY US Equity", "width": 0.13851819621290817}, {"from": "XLB US Equity", "to": "XLI US Equity", "width": 0.05245100138065362}, {"from": "XLB US Equity", "to": "XLV US Equity", "width": 0.33533105572307675}, {"from": "XLB US Equity", "to": "XLF US Equity", "width": 0.032128855325350814}, {"from": "XLB US Equity", "to": "VOX US Equity", "width": 0.22867794471593528}, {"from": "XLP US Equity", "to": "XLY US Equity", "width": 0.13695443850900646}, {"from": "XLP US Equity", "to": "XLI US Equity", "width": 0.2307577086767605}, {"from": "XLP US Equity", "to": "XLV US Equity", "width": 0.221180844410938}, {"from": "XLP US Equity", "to": "XLF US Equity", "width": 0.27569774431918126}, {"from": "XLP US Equity", "to": "VOX US Equity", "width": 0.2963250820320972}, {"from": "XLY US Equity", "to": "XLI US Equity", "width": 0.14816827616301154}, {"from": "XLY US Equity", "to": "XLV US Equity", "width": 0.21007631731368615}, {"from": "XLY US Equity", "to": "XLF US Equity", "width": 0.1717045845982944}, {"from": "XLY US Equity", "to": "VOX US Equity", "width": 0.11972710243766516}, {"from": "XLI US Equity", "to": "XLV US Equity", "width": 0.30860886913850083}, {"from": "XLI US Equity", "to": "XLF US Equity", "width": 0.07606448817304978}, {"from": "XLI US Equity", "to": "VOX US Equity", "width": 0.23830707219573177}, {"from": "XLV US Equity", "to": "XLF US Equity", "width": 0.3835591289110992}, {"from": "XLV US Equity", "to": "VOX US Equity", "width": 0.18960546019771396}, {"from": "XLF US Equity", "to": "VOX US Equity", "width": 0.26036808824980684}]);
+
+                  nodeColors = {};
+                  allNodes = nodes.get({ returnType: "Object" });
+                  for (nodeId in allNodes) {
+                    nodeColors[nodeId] = allNodes[nodeId].color;
+                  }
+                  allEdges = edges.get({ returnType: "Object" });
+                  // adding nodes and edges to the graph
+                  data = {nodes: nodes, edges: edges};
+
+                  var options = {
+    "configure": {
+        "enabled": false
+    },
+    "edges": {
+        "color": {
+            "inherit": true
+        },
+        "smooth": {
+            "enabled": true,
+            "type": "dynamic"
+        }
+    },
+    "interaction": {
+        "dragNodes": true,
+        "hideEdgesOnDrag": false,
+        "hideNodesOnDrag": false
+    },
+    "physics": {
+        "enabled": true,
+        "stabilization": {
+            "enabled": true,
+            "fit": true,
+            "iterations": 1000,
+            "onlyDynamicEdges": false,
+            "updateInterval": 50
+        }
+    }
+};
+
+                  
+
+
+                  
+
+                  network = new vis.Network(container, data, options);
+
+                  
+
+                  
+
+                  
+
+
+                  
+
+                  return network;
+
+              }
+              drawGraph();
+        </script>
+    </body>
+</html>

@@ -234,12 +234,12 @@ st.markdown('## Correlation Chart Analysis')
 #-----------------------------------------------------
 from pyvis.network import Network
 
-'''
+
 for i in range(len(mw_net)):
     nt = Network(height="500px", width="100%")
     nt.from_nx(mw_net[i])
     nt.show(f'./html/{dates_list[i]}.html')
-'''
+
 
 import streamlit.components.v1 as components
 st.markdown(f'## Find Similar Dates with Graph')
