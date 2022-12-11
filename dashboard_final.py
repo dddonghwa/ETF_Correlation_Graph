@@ -230,6 +230,7 @@ selected_date = st.select_slider(
     label="Selected date : ",
     options=dates_list
 )
+st.markdown('## Market Chart')
 # Line Chart
 avg_sector_returns = pd.DataFrame(columns = sector_returns.columns)
 for sector in sector_mw :
@@ -244,7 +245,6 @@ avg_bm = avg_bm.reset_index()
 avg_bm.columns = ['Dates', benchmark]
 
 chart1, chart2 = st.columns(2)
-st.markdown('## Market Chart')
 with chart1:
     st.markdown("### Market(S&P) Line Chart")
     fig = go.Figure(layout=go.Layout(width=900))
@@ -305,17 +305,10 @@ st.plotly_chart(fig)
 from pyvis.network import Network
 
 
-<<<<<<< HEAD
-for i in range(len(mw_net)):
-    nt = Network(height="500px", width="100%")
-    nt.from_nx(mw_net[i])
-    nt.show(f'./html/{dates_list[i]}.html')
-=======
-# for i in range(len(mw_net)):
-#     nt = Network(height="500px", width="100%")
-#     nt.from_nx(mw_net[i])
-#     nt.show(f'./html/{dates_list[i]}.html')
->>>>>>> 978e82be79f8fbe87b82129a009f64e4406bcd50
+#for i in range(len(mw_net)):
+#    nt = Network(height="500px", width="100%")
+#    nt.from_nx(mw_net[i])
+#    nt.show(f'./html/{dates_list[i]}.html')
 
 
 import streamlit.components.v1 as components
