@@ -1,15 +1,15 @@
 from datetime import timedelta, datetime
 from matplotlib.pyplot import xlabel
+from plotly.subplots import make_subplots
+
+import plotly.express as px
 import streamlit as st
 import pandas as pd
 import plotly.graph_objects as go
-from plotly.subplots import make_subplots
-import plotly.express as px
+import numpy as np
 
 pd.options.display.float_format = "{:,}".format
-
 st.set_page_config(layout="wide")
-
 st.markdown('# Stock Network Analysis')
 
 with st.expander(label="Project Descriptions", expanded=False):
@@ -62,8 +62,8 @@ etfs = sector_returns.columns.tolist()
 
 #-----------------------------------------------------
 # Moving Window
-def moving_window(df, length):
-    return [df[i:i+length] for i in range(0, (len(df)+1)-length, length)]
+def moving_window(df, length, overlaps=10):
+    return [df[i:i+length] for i in range(0, (len(df)+1)-length, length//overlaps)]
 
 sector_mw = moving_window(sector_returns, 21)
 
@@ -162,6 +162,49 @@ def build_corr_nx(df_corr_list):
 mw_net = build_corr_nx(mw_corr)
 
 #-----------------------------------------------------
+
+def calculate_metric(df_corr_list, type = 'sum'):
+    
+    metric_list = []
+
+    for x in range(0, len(df_corr_list)): #len(df_corr_list)
+
+        cor_matrix = df_corr_list[x].values.astype('float') # np matrix
+        sim_matrix = 1 - cor_matrix # similarity matrix (distance matrix), diagonal is 0
+
+        if(type == 'sum'):
+            metric = np.sum(sim_matrix)
+        elif(type == 'max-min'):
+            max = np.max(sim_matrix)
+            min = np.min(sim_matrix + np.eye(sim_matrix.shape[0]))
+            metric = max - min
+
+        elif(type == 'entropy'):
+            # Normalize the matrix into probability distribution, then get rid of diagonal (all 0).
+            # Then Calculate entropy with the probability distribution.
+            
+            sim_matrix /= np.sum(sim_matrix)
+            metric = 0
+
+            for i in range(sim_matrix.shape[0]):
+                for j in range(sim_matrix.shape[1]):
+                    if i != j:
+                        metric += -(sim_matrix[i][j] * np.log(sim_matrix[i][j]))
+
+        metric_list.append(metric)
+       
+    return metric_list
+
+def calculate_diff(metric_list, h = 12, overlaps = 6):
+
+    diff = []
+    for i in range(0,len(metric_list) - h,h//overlaps):
+        diff.append(metric_list[i+h] - metric_list[i])
+
+    return diff
+
+#-----------------------------------------------------
+
 st.write('Project Overview Flow Fig')
 data1, data2, data3 = st.columns(3)
 with data1:
@@ -231,15 +274,42 @@ with chart2:
 st.markdown('## Correlation Chart Analysis')
 ## 재훈님 이 부분 채워주세요!
 
+sector_mw = moving_window(sector_returns, 60, overlaps = 30)
+
+mw_corr = df_distance_correlation(sector_mw)
+mw_net = build_corr_nx(mw_corr)
+
+metric = {}
+metric['sum'] = calculate_metric(mw_corr, 'sum')
+metric['entropy'] = calculate_metric(mw_corr, 'entropy')
+metric['max-min'] = calculate_metric(mw_corr, 'max-min')
+metric['diff'] = calculate_diff(metric['max-min'])
+
+# max-min 이 최대, 최소를 찍는 date 를 저장하고 있는 부분
+# 이 두 시점의 그래프를 그려보면 좋을 것 같아요.
+min_ind = np.argmin(metric['max-min'])
+max_ind = np.argmax(metric['max-min'])
+
+fig = go.Figure(layout=go.Layout(width=1500))
+
+fig.add_trace(go.Scatter(x=avg_sector_returns.index, y= metric['sum']/np.max(metric['sum']), name='sum'))
+# fig.add_trace(go.Scatter(x=avg_sector_returns.index, y= (metric['entropy'] - np.average(metric['entropy'])) * 5, name='entropy'))
+fig.add_trace(go.Scatter(x=avg_sector_returns.index, y= metric['max-min']/np.max(metric['max-min']), name='max-min'))
+fig.add_trace(go.Scatter(x=avg_sector_returns.index[:-12:2], y= metric['diff']/np.max(metric['diff'])/3, name='diff'))
+
+fig.update_xaxes(title_text = "Dates")
+fig.update_yaxes(title_text= "Metrics")
+st.plotly_chart(fig)
+
 #-----------------------------------------------------
 from pyvis.network import Network
 
-'''
-for i in range(len(mw_net)):
-    nt = Network(height="500px", width="100%")
-    nt.from_nx(mw_net[i])
-    nt.show(f'./html/{dates_list[i]}.html')
-'''
+
+# for i in range(len(mw_net)):
+#     nt = Network(height="500px", width="100%")
+#     nt.from_nx(mw_net[i])
+#     nt.show(f'./html/{dates_list[i]}.html')
+
 
 import streamlit.components.v1 as components
 st.markdown(f'## Find Similar Dates with Graph')
