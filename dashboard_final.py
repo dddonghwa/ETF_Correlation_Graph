@@ -286,7 +286,7 @@ metric['max-min'] = calculate_metric(mw_corr, 'max-min')
 metric['diff'] = calculate_diff(metric['max-min'])
 
 # max-min 이 최대, 최소를 찍는 date 를 저장하고 있는 부분
-# 이 두 시점의 그래프를 그려보면 좋을 것 같아요
+# 이 두 시점의 그래프를 그려보면 좋을 것 같아요.
 min_ind = np.argmin(metric['max-min'])
 max_ind = np.argmax(metric['max-min'])
 
