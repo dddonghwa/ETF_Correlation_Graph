@@ -271,7 +271,7 @@ with chart2:
     st.plotly_chart(fig)
 #-----------------------------------------------------
 # Correlation Graph Analysis
-st.markdown('## Correlation Chart Analysis with various metrics (sum, max-min, differential of max-min')
+st.markdown('## Correlation Chart Analysis')
 ## 재훈님 이 부분 채워주세요!
 
 sector_mw = moving_window(sector_returns, 60, overlaps = 30)
